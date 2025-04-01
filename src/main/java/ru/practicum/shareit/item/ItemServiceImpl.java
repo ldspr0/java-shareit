@@ -1,5 +1,8 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class ItemServiceImpl implements ItemService {
     @Override
     public void createItem(Item item) {
@@ -17,7 +20,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void search(int text) {
+    public void search(String text) {
 
     }
 

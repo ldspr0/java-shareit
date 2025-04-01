@@ -7,7 +7,7 @@ public interface ItemService {
 
     void getAllItems();
 
-    void search(int text);
+    void search(String text);
 
     void getItem(long id);
 

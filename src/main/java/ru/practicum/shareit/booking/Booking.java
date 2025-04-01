@@ -6,12 +6,12 @@ import java.time.Instant;
  * TODO Sprint add-bookings.
  */
 public class Booking {
-    long itemId;
-    long bookedTo;
+    private long itemId;
+    private long bookedTo;
 
-    Instant dateStart;
-    Instant dateEnd;
+    private Instant dateStart;
+    private Instant dateEnd;
 
-    String status;
-    String review;
+    private String status;
+    private String review;
 }

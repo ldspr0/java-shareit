@@ -7,11 +7,11 @@ import lombok.Data;
  */
 @Data
 public class Item {
-    long id;
-    long ownerId;
+    private long id;
+    private long ownerId;
 
-    String name;
-    String description;
-    String status;
+    private String name;
+    private String description;
+    private String status;
 
 }
