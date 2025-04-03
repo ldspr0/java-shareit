@@ -55,6 +55,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean removeUser(long id) {
-        return false;
+        return userDao.removeUser(id);
     }
 }

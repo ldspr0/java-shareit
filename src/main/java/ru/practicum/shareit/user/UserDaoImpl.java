@@ -27,7 +27,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> getUser(long id) {
-        return Optional.of(users.get(id));
+        return Optional.ofNullable(users.get(id));
     }
 
     @Override
