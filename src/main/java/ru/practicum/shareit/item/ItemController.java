@@ -15,23 +15,24 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto createItem(@RequestHeader(USER_ID_HEADER) long userId,
                               @Valid @RequestBody NewItemRequest request) {
         return itemService.createItem(userId, request);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto updateItem(@RequestHeader(USER_ID_HEADER) long userId,
                               @PathVariable long id,
                               @Valid @RequestBody UpdateItemRequest request) {
         return itemService.updateItem(userId, id, request);
     }
 
     @GetMapping
-    public Collection<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public Collection<ItemDto> getAllItems(@RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.getAllItems(userId);
     }
 

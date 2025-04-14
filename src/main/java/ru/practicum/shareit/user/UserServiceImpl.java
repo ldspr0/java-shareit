@@ -1,3 +1,4 @@
+
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
@@ -18,14 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(NewUserRequest request) {
-
-        Optional<User> alreadyExistUser = userDao.getUserByEmail(request.getEmail());
-        if (alreadyExistUser.isPresent()) {
-            throw new DuplicatedDataException("Email уже используется");
-        }
+        checkIfEmailIsInUseOrThrowDuplicationError(request.getEmail());
 
         User user = UserMapper.mapToUser(request);
-
         user = userDao.createUser(user);
 
         return UserMapper.mapToUserDto(user);
@@ -33,10 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(long id, UpdateUserRequest request) {
-        Optional<User> alreadyExistUser = userDao.getUserByEmail(request.getEmail());
-        if (alreadyExistUser.isPresent()) {
-            throw new DuplicatedDataException("Email уже используется");
-        }
+        checkIfEmailIsInUseOrThrowDuplicationError(request.getEmail());
 
         User updatedUser = userDao.getUser(id)
                 .map(user -> UserMapper.updateUserFields(user, request))
@@ -57,4 +50,13 @@ public class UserServiceImpl implements UserService {
     public boolean removeUser(long id) {
         return userDao.removeUser(id);
     }
+
+
+    private void checkIfEmailIsInUseOrThrowDuplicationError(String email) {
+        Optional<User> alreadyExistUser = userDao.getUserByEmail(email);
+        if (alreadyExistUser.isPresent()) {
+            throw new DuplicatedDataException("Email уже используется");
+        }
+    }
+
 }
