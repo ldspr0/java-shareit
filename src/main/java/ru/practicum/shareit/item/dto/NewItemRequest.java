@@ -1,16 +1,16 @@
 package ru.practicum.shareit.item.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
 public class NewItemRequest {
-    @NotNull
+    @NotBlank
     @Length(min = 1, max = 200)
     private String name;
-    @NotNull
+    @NotBlank
     private String description;
-    @NotNull
+    @NotBlank
     private Boolean available;
 }
