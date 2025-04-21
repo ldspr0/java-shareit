@@ -1,10 +1,10 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.persistence.Enumerated;
+
 import java.time.Instant;
 
-/**
- * TODO Sprint add-bookings.
- */
+
 public class Booking {
     private long itemId;
     private long bookedTo;
@@ -12,6 +12,7 @@ public class Booking {
     private Instant dateStart;
     private Instant dateEnd;
 
+    @Enumerated
     private String status;
     private String review;
 }
