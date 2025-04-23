@@ -47,7 +47,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public boolean removeItem(@PathVariable long id) {
-        return itemService.removeItem(id);
+    public void removeItem(@PathVariable long id) {
+        itemService.removeItem(id);
     }
 }

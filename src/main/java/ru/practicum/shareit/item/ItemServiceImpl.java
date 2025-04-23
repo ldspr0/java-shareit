@@ -8,55 +8,58 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserDao;
+import ru.practicum.shareit.validations.ServiceValidations;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Collections;
+
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemDao itemDao;
-    private final UserDao userDao;
+    private final ServiceValidations serviceValidations;
+    private final ItemRepository itemRepository;
 
     @Override
     public ItemDto createItem(long userId, NewItemRequest request) {
-        checkIfUserExistsOrThrowError(userId);
+        serviceValidations.checkIfUserExistsOrThrowError(userId);
 
         Item item = ItemMapper.mapToItem(request);
         item.setOwnerId(userId);
-        item = itemDao.createItem(item);
+        item = itemRepository.save(item);
 
         return ItemMapper.mapToItemDto(item);
     }
 
     @Override
     public ItemDto updateItem(long userId, long id, UpdateItemRequest request) {
-        checkIfUserExistsOrThrowError(userId);
+        serviceValidations.checkIfUserExistsOrThrowError(userId);
 
-        Item updatedItem = itemDao.getItem(id)
+        Item updatedItem = itemRepository.findById(id)
                 .map(item -> ItemMapper.updateItemFields(item, request))
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
         if (updatedItem.getOwnerId() != userId) {
             throw new ConditionsNotMetException("Изменять данные о предмете может только владелец");
         }
 
-        updatedItem = itemDao.updateItem(updatedItem);
+        updatedItem = itemRepository.save(updatedItem);
         return ItemMapper.mapToItemDto(updatedItem);
     }
 
     @Override
     public Collection<ItemDto> getAllItems(long userId) {
-        return itemDao.getAllByUser(userId).stream()
+        return itemRepository.findByOwnerId(userId).stream()
                 .map(ItemMapper::mapToItemDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Collection<ItemDto> search(String text) {
-        return itemDao.getItemsBySearchText(text).stream()
+        if (text.isBlank()) {
+            return Collections.emptyList();
+        }
+        return itemRepository.findByNameContainingIgnoreCaseAndAvailableIsTrueOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text).stream()
                 .map(ItemMapper::mapToItemDto)
                 .collect(Collectors.toList());
     }
@@ -64,21 +67,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(long id) {
-        Item item = itemDao.getItem(id)
+        Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
 
         return ItemMapper.mapToItemDto(item);
     }
 
     @Override
-    public boolean removeItem(long id) {
-        return itemDao.removeItem(id);
-    }
-
-    private void checkIfUserExistsOrThrowError(long userId) {
-        Optional<User> userExists = userDao.getUser(userId);
-        if (userExists.isEmpty()) {
-            throw new NotFoundException("Пользователь с таким Id не найден");
-        }
+    public void removeItem(long id) {
+        itemRepository.deleteById(id);
     }
 }

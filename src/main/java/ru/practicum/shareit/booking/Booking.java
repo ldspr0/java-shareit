@@ -1,18 +1,34 @@
 package ru.practicum.shareit.booking;
 
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
+import lombok.Data;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.User;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
-
+@Data
+@Entity
+@Table(name = "bookings")
 public class Booking {
-    private long itemId;
-    private long bookedTo;
 
-    private Instant dateStart;
-    private Instant dateEnd;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    @Enumerated
-    private String status;
-    private String review;
+    @ManyToOne()
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
+
+    @ManyToOne()
+    @JoinColumn(name = "booked_by_id", referencedColumnName = "id")
+    private User bookedTo;
+
+    @Column(name = "start_date")
+    private LocalDateTime dateStart;
+    @Column(name = "end_date")
+    private LocalDateTime dateEnd;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

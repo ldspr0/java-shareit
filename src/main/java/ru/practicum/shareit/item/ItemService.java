@@ -17,5 +17,5 @@ public interface ItemService {
 
     ItemDto getItem(long id);
 
-    boolean removeItem(long id);
+    void removeItem(long id);
 }

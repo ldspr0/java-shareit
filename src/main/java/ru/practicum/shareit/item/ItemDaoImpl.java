@@ -1,13 +1,11 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Repository
 public class ItemDaoImpl implements ItemDao {
     private final Map<Long, Item> items = new HashMap<>();
 
