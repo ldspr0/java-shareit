@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.exception.ConditionsNotMetException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -90,11 +91,11 @@ public class ItemServiceImpl implements ItemService {
 
         ItemDto itemDto = ItemMapper.mapToItemDto(item);
 
-        Booking nextBooking = bookingRepository.findFirstByItemIdAndDateStartAfterOrderByDateStartAsc(id,
-                        LocalDateTime.now())
+        Booking nextBooking = bookingRepository.findFirstByItemIdAndDateStartAfterAndStatusOrderByDateStartAsc(id,
+                        LocalDateTime.now(), Status.APPROVED)
                 .orElse(null);
-        Booking lastBooking = bookingRepository.findFirstByItemIdAndDateEndBeforeOrderByDateEndDesc(id,
-                        LocalDateTime.now())
+        Booking lastBooking = bookingRepository.findFirstByItemIdAndDateEndBeforeAndStatusOrderByDateEndDesc(id,
+                        LocalDateTime.now(), Status.APPROVED)
                 .orElse(null);
 
         itemDto.setNextBooking(nextBooking != null ? BookingMapper.mapToBookingDto(nextBooking) : null);
