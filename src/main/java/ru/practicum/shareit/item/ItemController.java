@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comments.dto.CommentDto;
+import ru.practicum.shareit.item.comments.dto.NewCommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
@@ -22,6 +24,13 @@ public class ItemController {
     public ItemDto createItem(@RequestHeader(USER_ID_HEADER) long userId,
                               @Valid @RequestBody NewItemRequest request) {
         return itemService.createItem(userId, request);
+    }
+
+    @PostMapping("/{id}/comment")
+    public CommentDto addComment(@RequestHeader(USER_ID_HEADER) long userId,
+                                 @PathVariable long id,
+                                 @Valid @RequestBody NewCommentRequest request) {
+        return itemService.addComment(userId, id, request);
     }
 
     @PatchMapping("/{id}")

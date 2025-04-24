@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import java.util.Collection;
@@ -69,4 +70,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Collection<Booking> findByOwnerIdAndStatus(@Param("ownerId") Long ownerId,
                                                @Param("status") Status status);
 
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item.id = :itemId AND b.bookedTo.id = :userId")
+    Optional<Booking> findByItemIdAndBookerId(
+            @Param("itemId") Long itemId,
+            @Param("userId") Long userId
+    );
+
+    Optional<Booking> findFirstByItemIdAndDateStartAfterOrderByDateStartAsc(long id, LocalDateTime now);
+
+    Optional<Booking> findFirstByItemIdAndDateEndBeforeOrderByDateEndDesc(long id, LocalDateTime now);
 }
