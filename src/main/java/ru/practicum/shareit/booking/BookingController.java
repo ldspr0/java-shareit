@@ -24,10 +24,10 @@ public class BookingController {
     }
 
     @PatchMapping("/{id}")
-    public void bookingApproval(@RequestHeader(USER_ID_HEADER) long userId,
-                                @PathVariable long id,
-                                @RequestParam(defaultValue = "false") boolean approved) {
-        bookingService.setApproval(userId, id, approved);
+    public BookingDto bookingApproval(@RequestHeader(USER_ID_HEADER) long userId,
+                                      @PathVariable long id,
+                                      @RequestParam(defaultValue = "false") boolean approved) {
+        return bookingService.setApproval(userId, id, approved);
     }
 
     @GetMapping("/{id}")

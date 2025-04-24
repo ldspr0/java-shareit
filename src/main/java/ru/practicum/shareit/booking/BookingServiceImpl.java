@@ -26,22 +26,27 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private Collection<Booking> byBookedToAndStatusOrderByDateStartDesc;
 
     @Override
-    public Collection<BookingDto> getAllBookingsByOwner(long userId, String state) {
+    public Collection<BookingDto> getAllBookingsByOwner(long userId, String stateStr) {
         serviceValidations.checkIfUserExistsOrThrowError(userId);
 
-        return null;
-        //bookingRepository.findAllByOwnerIdAndStatus(userId, state);
+        State state = parseState(stateStr);
+        Instant now = Instant.now();
 
-         /*
-        Получение списка бронирований для всех вещей текущего пользователя.
-        Эндпоинт — GET /bookings/owner?state={state}.
-        Этот запрос имеет смысл для владельца хотя бы одной вещи. Работа параметра state аналогична его работе в
-        предыдущем сценарии.
+        Collection<Booking> bookings = switch (state) {
+            case ALL -> bookingRepository.findByOwnerIdOrderByDateStartDesc(userId);
+            case CURRENT -> bookingRepository.findCurrentByOwnerId(userId, now);
+            case PAST -> bookingRepository.findPastByOwnerId(userId, now);
+            case FUTURE -> bookingRepository.findFutureByOwnerId(userId, now);
+            case WAITING -> bookingRepository.findByOwnerIdAndStatus(userId, Status.WAITING);
+            case REJECTED -> bookingRepository.findByOwnerIdAndStatus(userId, Status.REJECTED);
+            default -> throw new ConditionsNotMetException("Неизвестный параметр: " + state);
+        };
 
-     */
+        return bookings.stream()
+                .map(BookingMapper::mapToBookingDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -49,29 +54,15 @@ public class BookingServiceImpl implements BookingService {
         State state = parseState(stateStr);
         Instant now = Instant.now();
 
-        Collection<Booking> bookings;
-        switch (state) {
-            case ALL:
-                bookings = bookingRepository.findByBookedToIdOrderByDateStartDesc(userId);
-                break;
-            case CURRENT:
-                bookings = bookingRepository.findCurrentByBookedTo(userId, now);
-                break;
-            case PAST:
-                bookings = bookingRepository.findByBookedToIdAndDateEndBeforeOrderByDateStartDesc(userId, now);
-                break;
-            case FUTURE:
-                bookings = bookingRepository.findByBookedToIdAndDateStartAfterOrderByDateStartDesc(userId, now);
-                break;
-            case WAITING:
-                bookings = bookingRepository.findByBookedToIdAndStatusOrderByDateStartDesc(userId, Status.WAITING);
-                break;
-            case REJECTED:
-                bookings = byBookedToAndStatusOrderByDateStartDesc;
-                break;
-            default:
-                throw new ConditionsNotMetException("Неизвестный параметр: " + state);
-        }
+        Collection<Booking> bookings = switch (state) {
+            case ALL -> bookingRepository.findByBookedToIdOrderByDateStartDesc(userId);
+            case CURRENT -> bookingRepository.findCurrentByBookedTo(userId, now);
+            case PAST -> bookingRepository.findByBookedToIdAndDateEndBeforeOrderByDateStartDesc(userId, now);
+            case FUTURE -> bookingRepository.findByBookedToIdAndDateStartAfterOrderByDateStartDesc(userId, now);
+            case WAITING -> bookingRepository.findByBookedToIdAndStatusOrderByDateStartDesc(userId, Status.WAITING);
+            case REJECTED -> bookingRepository.findByBookedToIdAndStatusOrderByDateStartDesc(userId, Status.REJECTED);
+            default -> throw new ConditionsNotMetException("Неизвестный параметр: " + state);
+        };
 
         return bookings.stream()
                 .map(BookingMapper::mapToBookingDto)
@@ -88,12 +79,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto setApproval(long userId, long id, boolean approved) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
-        Item item = itemRepository.findById(id)
+        Item item = itemRepository.findById(booking.getItem().getId())
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
         if (item.getOwnerId() != userId) {
-            log.error("item {}", item);
-            log.error("userId {}", userId);
-            log.error("id {}", id);
             throw new ConditionsNotMetException("Предмет вам не принадлежит");
         }
 
