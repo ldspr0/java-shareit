@@ -9,7 +9,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.NewUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.validations.ServiceValidations;
 
 @Slf4j
@@ -19,16 +18,17 @@ import ru.practicum.shareit.validations.ServiceValidations;
 public class UserServiceImpl implements UserService {
     private final ServiceValidations serviceValidations;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserDto createUser(NewUserRequest request) {
         log.info("UserServiceImpl : createUser start with request = {}", request);
         serviceValidations.checkIfEmailIsInUseOrThrowDuplicationError(request.getEmail());
 
-        User user = UserMapper.mapToUser(request);
+        User user = userMapper.newUserRequestToUser(request);
         user = userRepository.save(user);
 
-        return UserMapper.mapToUserDto(user);
+        return userMapper.userToUserDto(user);
     }
 
     @Override
@@ -37,9 +37,9 @@ public class UserServiceImpl implements UserService {
         serviceValidations.checkIfEmailIsInUseOrThrowDuplicationError(request.getEmail());
 
         User updatedUser = userRepository.findById(id)
-                .map(user -> UserMapper.updateUserFields(user, request))
+                .map(user -> userMapper.updateUserFromRequest(request, user))
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        return UserMapper.mapToUserDto(updatedUser);
+        return userMapper.userToUserDto(updatedUser);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        return UserMapper.mapToUserDto(user);
+        return userMapper.userToUserDto(user);
     }
 
     @Override
