@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.exception.ConditionsNotMetException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -92,7 +91,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public ItemDto getItem(long id) {
+    public ItemDto getItem(long userId, long id) {
         log.info("ItemServiceImpl : getItem start with id = {}", id);
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
