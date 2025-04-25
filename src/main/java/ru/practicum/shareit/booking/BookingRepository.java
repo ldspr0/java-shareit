@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -11,12 +10,10 @@ import java.util.Optional;
 
 import java.util.Collection;
 
-@Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b " +
-            "WHERE b.id = :id " +
-            "AND (b.item.ownerId = :userId OR b.bookedTo.id = :userId)")
+            "WHERE b.id = :id AND (b.item.ownerId = :userId OR b.bookedTo.id = :userId)")
     Optional<Booking> findByIdAndUserId(
             @Param("id") Long bookingId,
             @Param("userId") Long userId
@@ -25,20 +22,20 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Для State.ALL
     Collection<Booking> findByBookedToIdOrderByDateStartDesc(Long bookerId);
 
-    @Query("SELECT b FROM Booking b WHERE b.item.ownerId = :ownerId ORDER BY b.dateStart DESC")
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item.ownerId = :ownerId " +
+            "ORDER BY b.dateStart DESC")
     Collection<Booking> findByOwnerIdOrderByDateStartDesc(@Param("ownerId") Long ownerId);
 
     // Для State.CURRENT
     @Query("SELECT b FROM Booking b " +
-            "WHERE b.bookedTo  = :bookedTo " +
-            "AND b.dateStart <= :now AND b.dateEnd >= :now " +
+            "WHERE b.bookedTo  = :bookedTo AND b.dateStart <= :now AND b.dateEnd >= :now " +
             "ORDER BY b.dateStart DESC")
     Collection<Booking> findCurrentByBookedTo(@Param("bookedTo") Long bookedTo,
                                               @Param("now") Instant now);
 
     @Query("SELECT b FROM Booking b " +
-            "WHERE b.item.ownerId = :ownerId " +
-            "AND b.dateStart <= :now AND b.dateEnd >= :now " +
+            "WHERE b.item.ownerId = :ownerId AND b.dateStart <= :now AND b.dateEnd >= :now " +
             "ORDER BY b.dateStart DESC")
     Collection<Booking> findCurrentByOwnerId(@Param("ownerId") Long ownerId,
                                              @Param("now") Instant now);

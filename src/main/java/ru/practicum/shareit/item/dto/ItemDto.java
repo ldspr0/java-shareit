@@ -16,10 +16,14 @@ public class ItemDto {
     private long ownerId;
 
     private String name;
+
     private String description;
+
     private boolean available;
 
     private BookingDto lastBooking;
+
     private BookingDto nextBooking;
+    
     private List<CommentDto> comments;
 }

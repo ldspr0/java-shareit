@@ -20,6 +20,7 @@ public class BookingDto {
     private UserDto booker;
 
     private LocalDateTime start;
+
     private LocalDateTime end;
 
     private Status status;

@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -31,7 +33,9 @@ import java.util.Collections;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ServiceValidations serviceValidations;
@@ -42,6 +46,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(long userId, NewItemRequest request) {
+        log.info("ItemServiceImpl : createItem start with userId = {} and request = {}", userId, request);
         serviceValidations.checkIfUserExistsOrThrowError(userId);
 
         Item item = ItemMapper.mapToItem(request);
@@ -53,6 +58,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(long userId, long id, UpdateItemRequest request) {
+        log.info("ItemServiceImpl : updateItem start with userId = {} and request = {}", userId, request);
         serviceValidations.checkIfUserExistsOrThrowError(userId);
 
         Item updatedItem = itemRepository.findById(id)
@@ -62,12 +68,12 @@ public class ItemServiceImpl implements ItemService {
             throw new ConditionsNotMetException("Изменять данные о предмете может только владелец");
         }
 
-        updatedItem = itemRepository.save(updatedItem);
         return ItemMapper.mapToItemDto(updatedItem);
     }
 
     @Override
     public Collection<ItemDto> getAllItems(long userId) {
+        log.info("ItemServiceImpl : getAllItems start with userId = {}", userId);
         return itemRepository.findByOwnerId(userId).stream()
                 .map(ItemMapper::mapToItemDto)
                 .collect(Collectors.toList());
@@ -75,6 +81,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> search(String text) {
+        log.info("ItemServiceImpl : search start with text = {}", text);
         if (text.isBlank()) {
             return Collections.emptyList();
         }
@@ -86,6 +93,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(long id) {
+        log.info("ItemServiceImpl : getItem start with id = {}", id);
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
 
@@ -100,17 +108,21 @@ public class ItemServiceImpl implements ItemService {
 
         itemDto.setNextBooking(nextBooking != null ? BookingMapper.mapToBookingDto(nextBooking) : null);
         itemDto.setLastBooking(lastBooking != null ? BookingMapper.mapToBookingDto(lastBooking) : null);
-        itemDto.setComments(commentRepository.findByItemId(id).stream().map(CommentMapper::mapToCommentDto).collect(Collectors.toList()));
+        itemDto.setComments(commentRepository.findByItemId(id).stream()
+                .map(CommentMapper::mapToCommentDto)
+                .collect(Collectors.toList()));
         return itemDto;
     }
 
     @Override
     public void removeItem(long id) {
+        log.info("ItemServiceImpl : removeItem start with id = {}", id);
         itemRepository.deleteById(id);
     }
 
     @Override
     public CommentDto addComment(long userId, long id, NewCommentRequest request) {
+        log.info("ItemServiceImpl : addComment start with userId = {} and id = {} and request = {}", userId, id, request);
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
         User user = userRepository.findById(userId)

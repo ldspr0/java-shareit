@@ -18,5 +18,6 @@ public class CommentDto {
     private String authorName;
 
     private String text;
+
     private LocalDateTime created;
 }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.comments.dto.CommentDto;
@@ -12,6 +13,7 @@ import ru.practicum.shareit.item.dto.UpdateItemRequest;
 
 import java.util.Collection;
 
+@Slf4j
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createItem(@RequestHeader(USER_ID_HEADER) long userId,
                               @Valid @RequestBody NewItemRequest request) {
+        log.info("createItem request with userId = {} and request = {}", userId, request);
         return itemService.createItem(userId, request);
     }
 
@@ -30,6 +33,7 @@ public class ItemController {
     public CommentDto addComment(@RequestHeader(USER_ID_HEADER) long userId,
                                  @PathVariable long id,
                                  @Valid @RequestBody NewCommentRequest request) {
+        log.info("addComment request with userId = {} and id = {} and request = {}", userId, id, request);
         return itemService.addComment(userId, id, request);
     }
 
@@ -37,26 +41,31 @@ public class ItemController {
     public ItemDto updateItem(@RequestHeader(USER_ID_HEADER) long userId,
                               @PathVariable long id,
                               @Valid @RequestBody UpdateItemRequest request) {
+        log.info("updateItem request with userId = {} and id = {} and request = {}", userId, id, request);
         return itemService.updateItem(userId, id, request);
     }
 
     @GetMapping
     public Collection<ItemDto> getAllItems(@RequestHeader(USER_ID_HEADER) long userId) {
+        log.info("getAllItems request with userId = {}", userId);
         return itemService.getAllItems(userId);
     }
 
     @GetMapping("/search")
     public Collection<ItemDto> search(@RequestParam(defaultValue = "") String text) {
+        log.info("search request with text = {}", text);
         return itemService.search(text);
     }
 
     @GetMapping("/{id}")
     public ItemDto getItem(@PathVariable long id) {
+        log.info("getItem request with id = {}", id);
         return itemService.getItem(id);
     }
 
     @DeleteMapping("/{id}")
     public void removeItem(@PathVariable long id) {
+        log.info("removeItem request with id = {}", id);
         itemService.removeItem(id);
     }
 }

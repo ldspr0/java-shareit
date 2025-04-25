@@ -1,13 +1,17 @@
 package ru.practicum.shareit.item.comments;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -25,5 +29,6 @@ public class Comment {
     private User author;
 
     private String text;
+    
     private LocalDateTime created;
 }

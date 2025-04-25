@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final ServiceValidations serviceValidations;
@@ -29,6 +31,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<BookingDto> getAllBookingsByOwner(long userId, String stateStr) {
+        log.info("BookingServiceImpl : getAllBookingsByOwner start with userId = {} and stateStr = {}", userId, stateStr);
         serviceValidations.checkIfUserExistsOrThrowError(userId);
 
         State state = parseState(stateStr);
@@ -51,6 +54,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<BookingDto> getAllBookingsByUser(long userId, String stateStr) {
+        log.info("BookingServiceImpl : getAllBookingsByUser start with userId = {} and stateStr = {}", userId, stateStr);
         State state = parseState(stateStr);
         Instant now = Instant.now();
 
@@ -71,16 +75,20 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto getBooking(long userId, long id) {
-        Booking booking = bookingRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new NotFoundException("Резервирование не найдено"));
+        log.info("BookingServiceImpl : getBooking start with userId = {} and id = {}", userId, id);
+        Booking booking = bookingRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Резервирование не найдено"));
         return BookingMapper.mapToBookingDto(booking);
     }
 
     @Override
     public BookingDto setApproval(long userId, long id, boolean approved) {
+        log.info("BookingServiceImpl : setApproval start with userId = {} and id = {} and approved = {}", userId, id, approved);
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
         Item item = itemRepository.findById(booking.getItem().getId())
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
+
         if (item.getOwnerId() != userId) {
             throw new ConditionsNotMetException("Предмет вам не принадлежит");
         }
@@ -93,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto createBooking(long userId, NewBookingRequest request) {
-
+        log.info("BookingServiceImpl : createBooking start with userId = {} and request = {}", userId, request);
         serviceValidations.checkIfUserExistsOrThrowError(userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));

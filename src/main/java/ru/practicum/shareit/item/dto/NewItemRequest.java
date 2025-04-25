@@ -10,8 +10,10 @@ public class NewItemRequest {
     @NotBlank
     @Length(min = 1, max = 255)
     private String name;
+
     @NotBlank
     private String description;
+    
     @NotNull
     private Boolean available;
 }
