@@ -58,10 +58,9 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItem(@RequestHeader(USER_ID_HEADER) long userId,
-                           @PathVariable long id) {
-        log.info("getItem request with userId = {} and id = {} ", userId, id);
-        return itemService.getItem(userId, id);
+    public ItemDto getItem(@PathVariable long id) {
+        log.info("getItem request with id = {}", id);
+        return itemService.getItem(id);
     }
 
     @DeleteMapping("/{id}")

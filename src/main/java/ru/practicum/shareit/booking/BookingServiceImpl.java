@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.exception.ConditionsNotMetException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.Item;
@@ -27,7 +28,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final BookingMapper bookingMapper;
 
     @Override
     public Collection<BookingDto> getAllBookingsByOwner(long userId, String stateStr) {
@@ -48,7 +48,7 @@ public class BookingServiceImpl implements BookingService {
         };
 
         return bookings.stream()
-                .map(bookingMapper::bookingToBookingDto)
+                .map(BookingMapper::mapToBookingDto)
                 .collect(Collectors.toList());
     }
 
@@ -69,7 +69,7 @@ public class BookingServiceImpl implements BookingService {
         };
 
         return bookings.stream()
-                .map(bookingMapper::bookingToBookingDto)
+                .map(BookingMapper::mapToBookingDto)
                 .collect(Collectors.toList());
     }
 
@@ -78,7 +78,7 @@ public class BookingServiceImpl implements BookingService {
         log.info("BookingServiceImpl : getBooking start with userId = {} and id = {}", userId, id);
         Booking booking = bookingRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new NotFoundException("Резервирование не найдено"));
-        return bookingMapper.bookingToBookingDto(booking);
+        return BookingMapper.mapToBookingDto(booking);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
 
-        return bookingMapper.bookingToBookingDto(booking);
+        return BookingMapper.mapToBookingDto(booking);
 
     }
 
@@ -111,13 +111,13 @@ public class BookingServiceImpl implements BookingService {
             throw new ConditionsNotMetException("Предмет недоступен");
         }
 
-        Booking booking = bookingMapper.newBookingRequestToBooking(request);
+        Booking booking = BookingMapper.mapToBooking(request);
         booking.setStatus(Status.WAITING);
         booking.setBookedTo(user);
         booking.setItem(item);
         booking = bookingRepository.save(booking);
 
-        return bookingMapper.bookingToBookingDto(booking);
+        return BookingMapper.mapToBookingDto(booking);
     }
 
     private State parseState(String stateStr) {

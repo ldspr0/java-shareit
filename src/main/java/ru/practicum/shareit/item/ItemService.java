@@ -17,7 +17,7 @@ public interface ItemService {
 
     Collection<ItemDto> search(String text);
 
-    ItemDto getItem(long userId, long id);
+    ItemDto getItem(long id);
 
     void removeItem(long id);
 
