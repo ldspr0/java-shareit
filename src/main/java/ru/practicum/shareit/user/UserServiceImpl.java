@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.findById(id)
                 .map(user -> userMapper.updateUserFromRequest(request, user))
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        updatedUser = userRepository.save(updatedUser);
         return userMapper.userToUserDto(updatedUser);
     }
 
