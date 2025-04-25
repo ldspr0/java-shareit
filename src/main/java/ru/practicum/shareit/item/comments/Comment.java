@@ -29,6 +29,6 @@ public class Comment {
     private User author;
 
     private String text;
-    
+
     private LocalDateTime created;
 }

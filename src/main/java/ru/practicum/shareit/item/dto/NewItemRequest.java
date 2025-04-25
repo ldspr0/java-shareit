@@ -13,7 +13,7 @@ public class NewItemRequest {
 
     @NotBlank
     private String description;
-    
+
     @NotNull
     private Boolean available;
 }
