@@ -14,9 +14,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.id = :id AND (b.item.ownerId = :userId OR b.bookedTo.id = :userId)")
-    Optional<Booking> findByIdAndUserId(
-            @Param("id") Long bookingId,
-            @Param("userId") Long userId
+    Optional<Booking> findByIdAndUserId(@Param("id") Long bookingId,
+                                        @Param("userId") Long userId
     );
 
     // Для State.ALL
@@ -69,24 +68,21 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.id = :itemId AND b.bookedTo.id = :userId")
-    Optional<Booking> findByItemIdAndBookerId(
-            @Param("itemId") Long itemId,
-            @Param("userId") Long userId
+    Optional<Booking> findByItemIdAndBookerId(@Param("itemId") Long itemId,
+                                              @Param("userId") Long userId
     );
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.id = :itemId AND b.dateStart > :now AND b.item.ownerId = :userId " +
             "ORDER BY b.dateStart ASC")
-    Optional<Booking> findNextBookingForItemOwner(
-            @Param("itemId") long itemId,
-            @Param("now") LocalDateTime now,
-            @Param("userId") long userId);
+    Optional<Booking> findNextBookingForItemOwner(@Param("itemId") long itemId,
+                                                  @Param("now") LocalDateTime now,
+                                                  @Param("userId") long userId);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.id = :itemId AND b.dateEnd < :now AND b.item.ownerId = :userId " +
             "ORDER BY b.dateEnd DESC")
-    Optional<Booking> findLastBookingForItemOwner(
-            @Param("itemId") long itemId,
-            @Param("now") LocalDateTime now,
-            @Param("userId") long userId);
+    Optional<Booking> findLastBookingForItemOwner(@Param("itemId") long itemId,
+                                                  @Param("now") LocalDateTime now,
+                                                  @Param("userId") long userId);
 }

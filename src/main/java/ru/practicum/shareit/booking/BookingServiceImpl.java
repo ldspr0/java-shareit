@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<BookingDto> getAllBookingsByOwner(long userId, String stateStr) {
         log.info("BookingServiceImpl : getAllBookingsByOwner start with userId = {} and stateStr = {}", userId, stateStr);
         serviceValidations.checkIfUserExistsOrThrowError(userId);
@@ -53,6 +54,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<BookingDto> getAllBookingsByUser(long userId, String stateStr) {
         log.info("BookingServiceImpl : getAllBookingsByUser start with userId = {} and stateStr = {}", userId, stateStr);
         State state = parseState(stateStr);
@@ -74,6 +76,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingDto getBooking(long userId, long id) {
         log.info("BookingServiceImpl : getBooking start with userId = {} and id = {}", userId, id);
         Booking booking = bookingRepository.findByIdAndUserId(id, userId)

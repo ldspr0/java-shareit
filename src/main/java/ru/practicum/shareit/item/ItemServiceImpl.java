@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,6 +71,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<ItemDto> getAllItems(long userId) {
         log.info("ItemServiceImpl : getAllItems start with userId = {}", userId);
         return itemRepository.findByOwnerId(userId).stream()
@@ -79,6 +80,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<ItemDto> search(String text) {
         log.info("ItemServiceImpl : search start with text = {}", text);
         if (text.isBlank()) {
@@ -91,6 +93,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto getItem(long userId, long id) {
         log.info("ItemServiceImpl : getItem start with id = {}", id);
         Item item = itemRepository.findById(id)
