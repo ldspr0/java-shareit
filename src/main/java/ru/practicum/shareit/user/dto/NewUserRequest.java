@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class NewUserRequest {
-
     @NotBlank
     private String name;
+
     @NotBlank
     @Email
     private String email;
