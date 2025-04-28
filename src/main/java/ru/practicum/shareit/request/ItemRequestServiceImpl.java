@@ -12,9 +12,7 @@ import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.validations.ServiceValidations;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
