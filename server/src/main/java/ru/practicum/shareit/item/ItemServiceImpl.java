@@ -4,12 +4,12 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.exception.ConditionsNotMetException;
 import ru.practicum.shareit.exception.NotFoundException;
 
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.item.comments.Comment;
@@ -132,6 +132,9 @@ public class ItemServiceImpl implements ItemService {
 
         Booking booking = bookingRepository.findByItemIdAndBookerId(id, userId)
                 .orElseThrow(() -> new ConditionsNotMetException("Пользователь не брал эту вещь в аренду"));
+
+        log.info("Booking: {}", booking.getDateEnd());
+        log.info("LocalDateTime: {}", LocalDateTime.now());
 
         if (booking.getDateEnd().isAfter(LocalDateTime.now())) {
             throw new ConditionsNotMetException("Срок аренды еще не прошел для пользователя");
