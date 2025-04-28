@@ -22,4 +22,6 @@ public class Item {
 
     @Column(name = "is_available")
     private boolean available;
+
+    private Long requestId;
 }
