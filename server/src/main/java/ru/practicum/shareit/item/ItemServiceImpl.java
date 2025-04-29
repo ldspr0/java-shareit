@@ -133,9 +133,6 @@ public class ItemServiceImpl implements ItemService {
         Booking booking = bookingRepository.findByItemIdAndBookerId(id, userId)
                 .orElseThrow(() -> new ConditionsNotMetException("Пользователь не брал эту вещь в аренду"));
 
-        log.info("Booking: {}", booking.getDateEnd());
-        log.info("LocalDateTime: {}", LocalDateTime.now());
-
         if (booking.getDateEnd().isAfter(LocalDateTime.now())) {
             throw new ConditionsNotMetException("Срок аренды еще не прошел для пользователя");
         }

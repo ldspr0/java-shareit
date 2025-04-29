@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,18 +9,20 @@ import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 
 import java.util.Collection;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_REQUESTS;
+import static ru.practicum.shareit.constants.Constants.USER_ID_HEADER;
+
 @Slf4j
 @RestController
-@RequestMapping(path = "/requests")
+@RequestMapping(API_PREFIX_REQUESTS)
 @RequiredArgsConstructor
 public class ItemRequestController {
     private final ItemRequestService itemRequestService;
-    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemRequestDto createRequest(@RequestHeader(USER_ID_HEADER) long userId,
-                                        @Valid @RequestBody NewItemRequestRequest request) {
+                                        @RequestBody NewItemRequestRequest request) {
         log.info("createRequest with userId = {}, content = {}", userId, request);
         return itemRequestService.createRequest(userId, request);
     }

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,23 +8,25 @@ import ru.practicum.shareit.user.dto.NewUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_USERS;
+
 @Slf4j
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(API_PREFIX_USERS)
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Valid @RequestBody NewUserRequest request) {
+    public UserDto createUser(@RequestBody NewUserRequest request) {
         log.info("createUser request with request = {}", request);
         return userService.createUser(request);
     }
 
     @PatchMapping("/{id}")
     public UserDto updateUser(@PathVariable long id,
-                              @Valid @RequestBody UpdateUserRequest request) {
+                              @RequestBody UpdateUserRequest request) {
         log.info("updateUser request with id = {} and request = {}", id, request);
         return userService.updateUser(id, request);
     }

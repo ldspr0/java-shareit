@@ -13,15 +13,17 @@ import ru.practicum.shareit.item.comments.dto.NewCommentRequest;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_ITEMS;
+
 @Service
 public class ItemClient extends BaseClient {
-    private static final String API_PREFIX = "/items";
+
 
     @Autowired
     public ItemClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX_ITEMS))
                         .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
                         .build()
         );

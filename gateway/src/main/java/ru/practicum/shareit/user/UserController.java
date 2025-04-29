@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.NewUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_USERS;
+
 @Slf4j
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(API_PREFIX_USERS)
 @RequiredArgsConstructor
 public class UserController {
     private final UserClient userClient;

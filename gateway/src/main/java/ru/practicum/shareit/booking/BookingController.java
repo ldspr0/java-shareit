@@ -8,25 +8,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
+
+import java.util.Collection;
+
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_BOOKING;
+import static ru.practicum.shareit.constants.Constants.USER_ID_HEADER;
 
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/bookings")
+@RequestMapping(API_PREFIX_BOOKING)
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingClient bookingClient;
-    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
-
-    //    @GetMapping
-//    public ResponseEntity<Object> getAllBookingsByUser(@RequestHeader(USER_ID_HEADER) long userId,
-//                                                       @RequestParam(defaultValue = "ALL") String state) {
-//        log.info("getAllBookingsByUser request with userId = {} and state = {}", userId, state);
-//        return bookingClient.getAllBookingsByUser(userId, state);
-//    }
-//
     @GetMapping("/owner")
     public ResponseEntity<Object> getAllBookingsByOwner(@RequestHeader(USER_ID_HEADER) long userId,
                                                         @RequestParam(defaultValue = "ALL") String state) {
@@ -35,14 +32,10 @@ public class BookingController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getBookings(@RequestHeader(USER_ID_HEADER) long userId,
-                                              @RequestParam(name = "state", defaultValue = "all") String stateParam,
-                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                              @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        State state = State.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
-        return bookingClient.getBookings(userId, state, from, size);
+    public ResponseEntity<Object> getAllBookingsByUser(@RequestHeader(USER_ID_HEADER) long userId,
+                                                       @RequestParam(defaultValue = "ALL") String state) {
+        log.info("getAllBookingsByUser request with userId = {} and state = {}", userId, state);
+        return bookingClient.getAllBookingsByUser(userId, state);
     }
 
     @PostMapping

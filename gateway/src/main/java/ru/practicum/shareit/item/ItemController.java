@@ -10,13 +10,15 @@ import ru.practicum.shareit.item.comments.dto.NewCommentRequest;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_ITEMS;
+import static ru.practicum.shareit.constants.Constants.USER_ID_HEADER;
+
 @Slf4j
 @RestController
-@RequestMapping("/items")
+@RequestMapping(API_PREFIX_ITEMS)
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemClient itemClient;
-    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

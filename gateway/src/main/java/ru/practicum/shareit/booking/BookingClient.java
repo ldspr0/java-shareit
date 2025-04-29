@@ -14,29 +14,21 @@ import ru.practicum.shareit.booking.dto.NewBookingRequest;
 
 import ru.practicum.shareit.client.BaseClient;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_BOOKING;
+
 @Service
 public class BookingClient extends BaseClient {
-    private static final String API_PREFIX = "/bookings";
+
 
     @Autowired
     public BookingClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX_BOOKING))
                         .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
                         .build()
         );
     }
-
-    public ResponseEntity<Object> getBookings(long userId, State state, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "state", state.name(),
-                "from", from,
-                "size", size
-        );
-        return get("?state={state}&from={from}&size={size}", userId, parameters);
-    }
-
 
     public ResponseEntity<Object> createBooking(long userId, NewBookingRequest requestDto) {
         return post("", userId, requestDto);
@@ -46,12 +38,12 @@ public class BookingClient extends BaseClient {
         return get("/" + bookingId, userId);
     }
 
-    //    public ResponseEntity<Object> getAllBookingsByUser(long userId, String state) {
-//        return get("", userId, state);
-//    }
-//
     public ResponseEntity<Object> getAllBookingsByOwner(long userId, String state) {
         return get("/owner?state=" + state, userId);
+    }
+
+    public ResponseEntity<Object> getAllBookingsByUser(long userId, String state) {
+        return get("?state=" + state, userId);
     }
 
     public ResponseEntity<Object> setApproval(long userId, long id, boolean approved) {

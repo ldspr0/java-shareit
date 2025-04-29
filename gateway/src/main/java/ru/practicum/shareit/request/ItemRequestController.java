@@ -8,14 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_REQUESTS;
+import static ru.practicum.shareit.constants.Constants.USER_ID_HEADER;
+
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/requests")
+@RequestMapping(API_PREFIX_REQUESTS)
 @RequiredArgsConstructor
 public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
-    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

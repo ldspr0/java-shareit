@@ -10,9 +10,6 @@ public class CommentDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
 
-    //@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    //private Item item;
-
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String authorName;
 

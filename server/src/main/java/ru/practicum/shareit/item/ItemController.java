@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,18 +12,20 @@ import ru.practicum.shareit.item.dto.UpdateItemRequest;
 
 import java.util.Collection;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_ITEMS;
+import static ru.practicum.shareit.constants.Constants.USER_ID_HEADER;
+
 @Slf4j
 @RestController
-@RequestMapping("/items")
+@RequestMapping(API_PREFIX_ITEMS)
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
-    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createItem(@RequestHeader(USER_ID_HEADER) long userId,
-                              @Valid @RequestBody NewItemRequest request) {
+                              @RequestBody NewItemRequest request) {
         log.info("createItem request with userId = {} and request = {}", userId, request);
         return itemService.createItem(userId, request);
     }
@@ -32,7 +33,7 @@ public class ItemController {
     @PostMapping("/{id}/comment")
     public CommentDto addComment(@RequestHeader(USER_ID_HEADER) long userId,
                                  @PathVariable long id,
-                                 @Valid @RequestBody NewCommentRequest request) {
+                                 @RequestBody NewCommentRequest request) {
         log.info("addComment request with userId = {} and id = {} and request = {}", userId, id, request);
         return itemService.addComment(userId, id, request);
     }
@@ -40,7 +41,7 @@ public class ItemController {
     @PatchMapping("/{id}")
     public ItemDto updateItem(@RequestHeader(USER_ID_HEADER) long userId,
                               @PathVariable long id,
-                              @Valid @RequestBody UpdateItemRequest request) {
+                              @RequestBody UpdateItemRequest request) {
         log.info("updateItem request with userId = {} and id = {} and request = {}", userId, id, request);
         return itemService.updateItem(userId, id, request);
     }

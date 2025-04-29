@@ -12,15 +12,17 @@ import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.user.dto.NewUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
 
+import static ru.practicum.shareit.constants.Constants.API_PREFIX_USERS;
+
 @Service
 public class UserClient extends BaseClient {
-    private static final String API_PREFIX = "/users";
+
 
     @Autowired
     public UserClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX_USERS))
                         .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
                         .build()
         );
